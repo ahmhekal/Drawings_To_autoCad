@@ -3,6 +3,8 @@ from dxfwrite.dimlines import dimstyles, LinearDimension ,RadialDimension
 import math
 import numpy as np
 
+# Number of colors #
+
 Red=1
 Yellow=2
 Green=3
@@ -12,7 +14,6 @@ Foshia=6
 White=7
 
 class shapes:
-    # Number of colors #
 
     drawing = ''
 
