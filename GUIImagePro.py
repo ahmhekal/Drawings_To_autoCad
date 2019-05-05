@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
-
 import matplotlib
 #get_ipython().run_line_magic('matplotlib', 'inline')
 import matplotlib.pyplot as plt
@@ -61,21 +55,21 @@ def same(arr1,arr2):
         return True
     else :
         return False
-    
+
 def samep(n1,n2):
     r=15
     if abs(n1-n2)<r:
         return True
     else:
         return False
-    
-    
+
+
 def im_in(n, array):
     r=15
     for i in array:
         if abs(n-i)<r:
             return True
-        
+
     return False
 
 
@@ -89,11 +83,11 @@ def connect_vertical_lines(vertical_lines):
         length = len(vertical_lines)
         maxy=0
         extention_flag=0
-        
+
         for j in range(0,len(vertical_lines)):
             if(i==j):
                 continue
-                    
+
             if vertical_lines[i][0] == vertical_lines[j][0]:  # They have the same x #
 
                 if vertical_lines[i][1] <= vertical_lines[j][1] and vertical_lines[i][3] >= vertical_lines[j][3]:  # i involve j #
@@ -103,20 +97,20 @@ def connect_vertical_lines(vertical_lines):
                 elif vertical_lines[i][1] >= vertical_lines[j][1] and vertical_lines[i][3] <= vertical_lines[j][3]:  # j involve i #4
                     #print(str(vertical_lines[j]) + " involve " + str(vertical_lines[i]),i)
                     ShouldRemove.append(vertical_lines[i])    # we should delete i
-                
+
                 elif vertical_lines[i][1] <= vertical_lines[j][1] and vertical_lines[i][3] >= vertical_lines[j][1]:
                     extention_flag=1
                     #print('case',vertical_lines[i],vertical_lines[j])
                     ShouldRemove.append(vertical_lines[j])
                     if vertical_lines[j][3]>=maxy:
                         maxy=vertical_lines[j][3]
-                        
-                        
-        if extention_flag==1: 
+
+
+        if extention_flag==1:
             vertical_end.append((vertical_lines[i],maxy))
             #print('appedned',vertical_lines[i],maxy)
-                    
-    output=[]                
+
+    output=[]
     for i in range(len(vertical_lines)):
         flag=0
         for j in range(len(ShouldRemove)):
@@ -124,7 +118,7 @@ def connect_vertical_lines(vertical_lines):
               vertical_lines[i][2]==ShouldRemove[j][2] and vertical_lines[i][3]==ShouldRemove[j][3]):
                 flag=1
                 break
-                
+
         if(flag==0):
             #print('3mlna append',len(vertical_end))
             for k in range(len(vertical_end)):
@@ -136,7 +130,7 @@ def connect_vertical_lines(vertical_lines):
             output.append(vertical_lines[i])
 
     return output
-            
+
 def connect_horizontal_lines(horizontal_lines):
     maxx=0
     ShouldRemove = []
@@ -146,9 +140,9 @@ def connect_horizontal_lines(horizontal_lines):
         length = len(horizontal_lines)
         maxx=0
         extention_flag=0
-        
+
         for j in range(0,len(horizontal_lines)):
-            
+
             if(i==j):
                 continue
 
@@ -159,18 +153,18 @@ def connect_horizontal_lines(horizontal_lines):
 
                 elif horizontal_lines[i][0] >= horizontal_lines[j][0] and horizontal_lines[i][2] <= horizontal_lines[j][2]:  # j involve i #4
                     ShouldRemove.append(horizontal_lines[i])    # we should delete i
-                    
+
                 elif horizontal_lines[i][0] <= horizontal_lines[j][0] and horizontal_lines[i][2] >= horizontal_lines[j][0]:
                     extention_flag=1
                     ShouldRemove.append(horizontal_lines[j])
                     if horizontal_lines[j][2]>=maxx:
                         maxx=horizontal_lines[j][2]
-                    
-        if extention_flag==1: 
+
+        if extention_flag==1:
             horizontal_end.append((horizontal_lines[i],maxx))
             #print('appedned',horizontal_lines[i],maxx)
-                    
-    output=[]                
+
+    output=[]
     for i in range(len(horizontal_lines)):
         flag=0
         for j in range(len(ShouldRemove)):
@@ -178,7 +172,7 @@ def connect_horizontal_lines(horizontal_lines):
               horizontal_lines[i][2]==ShouldRemove[j][2] and horizontal_lines[i][3]==ShouldRemove[j][3]):
                 flag=1
                 break
-                
+
         if(flag==0):
             for k in range(len(horizontal_end)):
                 #print('elmafrood',horizontal_lines[i],horizontal_end[k][0])
@@ -190,7 +184,7 @@ def connect_horizontal_lines(horizontal_lines):
     return output
 
 
-    
+
 ############################################ FUNCTION DETECT LINES
 def detect_lines(gray):
     global  horizontal
@@ -198,14 +192,14 @@ def detect_lines(gray):
     global general_line
     global minx
     global maxy
-    
+
     #creating a corresponding white image
-    
-    white = np.zeros_like(gray)                                                       
+
+    white = np.zeros_like(gray)
     white.fill(255)
     pure_lines = white
-    
-    
+
+
     #detect edge
     #di = cv2.dilate(gray,cv2.getStructuringElement(cv2.MORPH_RECT,(7,7)),iterations = 1)
     #edges=di-gray
@@ -223,7 +217,7 @@ def detect_lines(gray):
     #print('edges before houghlines')
     #plt.imshow(edges, cmap='gray')
     #plt.show()
-    lines = cv2.HoughLinesP(edges, 1, np.pi/180, 85, minLineLength=15, maxLineGap=0)       # Detect lines
+    lines = cv2.HoughLinesP(edges, 1, np.pi/180, 85, minLineLength=0, maxLineGap=0)       # Detect lines
 
 
     ####################################################################################################################
@@ -244,11 +238,11 @@ def detect_lines(gray):
                 line.append(lines[i][0][2])
                 line.append(lines[i][0][3])
                 new_lines.append(line)
-    
+
     except:
         #print('no lines found')
         return pure_lines
-    
+
     xs=[]
     ys=[]
 
@@ -298,10 +292,10 @@ def detect_lines(gray):
         for j in range(len(special_y)):
             if(abs(new_lines[i][3]-special_y[j])<r):
                 new_lines[i][3]=special_y[j]
-                break        
+                break
 
 
-    for i in range(len(new_lines)):   
+    for i in range(len(new_lines)):
         x1, y1, x2, y2 = new_lines[i]
         cv2.line(white, (x1, y1), (x2, y2), (0, 0, 0), 3)
     #x1, y1, x2, y2 = new_lines[8]
@@ -322,12 +316,12 @@ def detect_lines(gray):
     maxy=max(special_y)
 
     #print(new_lines, 'all lines')
-    
-    
-    
+
+
+
     for i in range(len(new_lines)):
-        
-        
+
+
         new_lines[i][0]-=minx
         new_lines[i][2]-=minx
 
@@ -339,11 +333,11 @@ def detect_lines(gray):
     vertical=[]
     horizontal=[]
     general_line=[]
-    
+
     vertical_1=[]
     horizontal_1=[]
     general_line_1=[]
-    
+
     for i in new_lines:
         #print("dimension",dimension)
         i.append(math.sqrt((i[0]-i[2])**2+(i[1]-i[3])**2))     ################## i will change it to dimension #
@@ -357,7 +351,7 @@ def detect_lines(gray):
     vertical_1=connect_vertical_lines(vertical_1)        # ( Connect Vertical lines first ) #
     #print("ssdsafsdaf",vertical_1)
     horizontal_1=connect_horizontal_lines(horizontal_1)
-    
+
 
     for i in vertical_1:
         vertical.append(i)
@@ -365,10 +359,10 @@ def detect_lines(gray):
     for i in horizontal_1:
         horizontal.append(i)
 
-        
+
     for i in general_line_1:
         general_line.append(i)
-    
+
     return pure_lines
     #horizontal = np.array(horizontal)
     #vertical = np.array(vertical_2)
@@ -376,23 +370,23 @@ def detect_lines(gray):
     # print("H",horizontal,"H")
     # print("V",vertical,"V")
     # print("G",general_line,"G")
-    # Show result     
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    # Show result
 
 
-print('################### Please Wait a moment (^_^) ################### \n')
+
+
+
+
+
+
+
+
+
+
+print('################### Stating The Program ... ################### \n')
 def det_circles(img,deep=0):
-    
-    
+
+
     img = cv2.medianBlur(img,5)
 
     circles=[]
@@ -417,7 +411,7 @@ def det_circles(img,deep=0):
 
 
 class shapes:
-    
+
     global factor
     drawing = ''
 
@@ -454,9 +448,9 @@ class shapes:
 
         dimstyles.new("arrow", tick="DIMTICK_ARROW",scale=1,height = hh+0.2, tick2x=True, dimlineext=0.,tickfactor=length/5)
         #dimlineex: incraese the length of line
-        
-        
-        
+
+
+
         # The angle control the slope of line
         Theta = math.atan((y1 - y2) / (x1 - x2))
         Theta = math.degrees(Theta)
@@ -541,13 +535,13 @@ class shapes:
 
     def circle_with_dims(self,r, x, y,color = White):
         global theta
-        
+
         circle = dxf.circle(r, (x, y))
         circle['color'] = color
         self.drawing.add(circle)
 
         dimstyles.setup(self.drawing)
-        dimstyles.new("radius",scale=10, height=r/4, prefix='R=',tickfactor=r/1.5)
+        dimstyles.new("radius",scale=1, height=r/4, prefix='R=',tickfactor=r/1.5)
 
         self.drawing.add(RadialDimension((x, y), (x+r*np.sin(theta), y + r*np.cos(theta)), dimstyle='radius'))
         self.drawing.save()
@@ -598,7 +592,7 @@ class shapes:
                     else:
                         count = count + 1
         self.drawing.save()
-        
+
     def Determine_UpperOrUnder(self,y,index,factor):
         #print("NewLength=",horizontal[index][4]/factor)
         Flag_there_is_a_line_above_me = 0
@@ -608,25 +602,25 @@ class shapes:
             if  i[1] > y:
                 Flag_there_is_a_line_above_me = 1
                 break
-        
+
         #print("Flag",Flag_there_is_a_line_above_me)
-        if Flag_there_is_a_line_above_me == 0:        
+        if Flag_there_is_a_line_above_me == 0:
             self.Horizontal_line_with_upper_dims(horizontal[index][0]/factor, horizontal[index][1]/factor,
                        horizontal[index][2]/factor, horizontal[index][3]/factor,horizontal[index][4]/factor,Green)
         else:
             self.Horizontal_line_with_under_dims(horizontal[index][0]/factor, horizontal[index][1]/factor,
                            horizontal[index][2]/factor, horizontal[index][3]/factor,horizontal[index][4]/factor,Green)
-                
+
     def Determine_RightOrLeft(self,x,index,factor):
         #print("NewLength=", vertical[index][4] / factor)
         Flag_there_is_a_line_right_me = 0
-        
+
         for i in vertical:
             if  i[0] > x:
                 Flag_there_is_a_line_right_me = 1
                 break
-               
-        if Flag_there_is_a_line_right_me == 0:        
+
+        if Flag_there_is_a_line_right_me == 0:
             self.vertical_line_with_right_dims(vertical[index][0]/factor, vertical[index][1]/factor,
                        vertical[index][2]/factor, vertical[index][3]/factor,vertical[index][4]/factor,Green)
         else:
@@ -637,8 +631,8 @@ class shapes:
 # In[2]:
 
 
-def draw():   
-    
+def draw():
+
 
     test = cv2.imread(name)     # Reading the original image
 
@@ -676,7 +670,7 @@ def draw():
     ret,test = cv2.threshold(test,40,255,cv2.THRESH_BINARY)
 
     test = cv2.dilate(test,cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(7,7)),iterations = 1)
-    test = cv2.erode(test,cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(7,7)),iterations = 1)   
+    test = cv2.erode(test,cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(7,7)),iterations = 1)
     #ret,test = cv2.threshold(test,70,255,cv2.THRESH_BINARY)
 
     test=cv2.bitwise_not(test)
@@ -716,8 +710,8 @@ def draw():
     # plt.imshow(output)
     # plt.show()
 
-    
-    
+
+
 
     #print('######################################################4 \n')
 
@@ -780,7 +774,7 @@ def draw():
             list_circles.append(circle)
 
         #creating a corresponding white image
-        white_new = np.zeros_like(test)                                                       
+        white_new = np.zeros_like(test)
         white_new.fill(255)
 
         for i in circles[0,:4]:
@@ -875,7 +869,7 @@ def draw():
 
         x = list_circles[j][0]
         y = list_circles[j][1]
-        r = list_circles[j][2] 
+        r = list_circles[j][2]
 
         black = 200 #if the pixel value is less than this,, consider it black
 
@@ -955,7 +949,7 @@ def draw():
 
 
 
-     
+
 
 
 # In[3]:
@@ -963,13 +957,13 @@ def draw():
 
 # This main is only for Testing #
 def main_prog():
-    
+
     global horizontal
     global vertical
     global general_line
-    
-    
-    
+
+
+
     s = shapes(name)
     #s.circle_with_dims(2,3,5,Blue)
 
@@ -990,7 +984,7 @@ def main_prog():
 
      #EX2: trying to draw the proposal shape #
 
-    global factor 
+    global factor
     factor = distancelist[0]/dimension
     #print(factor)
     # s.text("Elevation",6.7,-0.5)
@@ -1009,7 +1003,7 @@ def main_prog():
 
     for i in range (1,len(horizontal)):
 
-        if(horizontal[i][4]==horizontal[i-1][4]):    # length of i = length of  i-1 
+        if(horizontal[i][4]==horizontal[i-1][4]):    # length of i = length of  i-1
             if(horizontal[i][1]<horizontal[i-1][1]): #  i under i-1
                 # print("ok3")
                 s.Horizontal_line_with_under_dims(horizontal[i][0]/factor, horizontal[i][1]/factor, horizontal[i][2]/factor, horizontal[i][3]/factor,horizontal[i][4]/factor,Green)
@@ -1036,8 +1030,8 @@ def main_prog():
         s.Determine_RightOrLeft(vertical[0][0],0,factor)
 
     for i in range (1,len(vertical)):
-        if(vertical[i][4]==vertical[i-1][4]):     # length of i = length of  i-1 
-            if(vertical[i][0]>vertical[i-1][0]):  #  i right i-1  
+        if(vertical[i][4]==vertical[i-1][4]):     # length of i = length of  i-1
+            if(vertical[i][0]>vertical[i-1][0]):  #  i right i-1
                 s.vertical_line_with_right_dims(vertical[i][0]/factor, vertical[i][1]/factor, vertical[i][2]/factor, vertical[i][3]/factor,vertical[i][4]/factor,Green)
                 s.line_with_NO_dims(vertical[i-1][0]/factor, vertical[i-1][1]/factor, vertical[i-1][2]/factor, vertical[i-1][3]/factor,Green)
             else:
@@ -1120,7 +1114,25 @@ dimension = 0
 distancelist = []
 
 
+def reset():
+    global factor
+    global horizontal
+    global vertical
+    global factor
+    global list_circles
+    global distancelist
+    global points_list
+    factor = 1
+    horizontal = []
+    vertical = []
+    general_line = []
+    list_circles = []
+    distancelist = []
+    points_list = []
+
+
 def Import_pic():
+    reset()
     fileName = QtWidgets.QFileDialog.getOpenFileName()
     pixmap = QtGui.QPixmap(str(fileName[0]))
     label.setPixmap(pixmap)
@@ -1152,44 +1164,37 @@ def get_distance():
         distancelist.append(dis)
     # return dis
 
-
-def reset():
-    global factor
-    global horizontal
-    global vertical
-    global factor
-    global list_circles
-    global distancelist
-    global points_list
-    factor = 1
-    horizontal = []
-    vertical = []
-    general_line = []
-    list_circles = []
-    distancelist = []
-    points_list = []
-
-
 def convert_to_autocad():
-    get_distance()
-    draw()
-    main_prog()
-    reset()
-    os.startfile(name + ".dxf")
-    convertButton.setEnabled(False)
-    generateFileButton.setEnabled(False)
+    try:
+        get_distance()
+        draw()
+        main_prog()
+        reset()
+        os.startfile(name + ".dxf")
+        convertButton.setEnabled(False)
+        generateFileButton.setEnabled(False)
+    except:
+        print('error found, try again')
+        convertButton.setEnabled(False)
+        generateFileButton.setEnabled(False)
+        reset()
     # print(temp)
 
 
 def generate_file():
-    get_distance()
-    draw()
-    main_prog()
-    reset()
-    convertButton.setEnabled(False)
-    generateFileButton.setEnabled(False)
-    filelabel.show()
-
+    try:
+        get_distance()
+        draw()
+        main_prog()
+        reset()
+        convertButton.setEnabled(False)
+        generateFileButton.setEnabled(False)
+        filelabel.show()
+    except:
+        print('error found')
+        convertButton.setEnabled(False)
+        generateFileButton.setEnabled(False)
+        reset()
 
 def getPos(event):
     x = event.pos().x()
@@ -1263,7 +1268,7 @@ dimenArea.setStyleSheet(
 dimenArea.setFixedSize(72, 32)
 dimenArea.hide()
 # enter dimension label
-dimenLabel = QtWidgets.QLabel("Press two points and Enter Dimension")
+dimenLabel = QtWidgets.QLabel("Click on two points with the mouse then Enter a Dimension")
 dimenLabel.setStyleSheet("QLabel{font:bold 18px;color:#6A5ACD}")
 dimenLabel.hide()
 # dimension enter
@@ -1274,8 +1279,8 @@ enterButton.hide()
 enterButton.clicked.connect(on_enter_button_clicked)
 # click flag
 clicklabel = QtWidgets.QLabel()
-clicklabel.setFixedSize(300, 200)
-clicklabel.setStyleSheet("QLabel{font:bold 26px;color:#228B22}")
+clicklabel.setFixedSize(220, 150)
+clicklabel.setStyleSheet("QLabel{font:bold 19px;color:#228B22}")
 clicklabel.hide()
 # file generated flag
 filelabel = QtWidgets.QLabel("File Generated")
@@ -1344,88 +1349,3 @@ cv2.imwrite('image12.png', resized)
 
 
 temp=name.split('.')[0]
-
-# In[13]:
-
-
-# class MyWidget(QtWidgets.QWidget):
-#     def __init__(self):
-#         super().__init__()
-
-#         #self.hello = ["Hallo Welt", "Hei maailma", "Hola Mundo", "Привет мир"]
-
-#         self.button = QtWidgets.QPushButton("Click me!")
-#         fileName="C:/Users/HP/Desktop/ImageGUI/icons8-edit-500.png"
-#         pixmap = QtGui.QPixmap(fileName)
-    
-#         self.text = QtWidgets.QLabel()
-#         self.text.setPixmap(pixmap)
-        
-#         #self.text.setAlignment(QtCore.Qt.AlignCenter)
-
-#         self.layout = QtWidgets.QVBoxLayout()
-#         self.layout.addWidget(self.text)
-#         self.layout.addWidget(self.button)
-#         self.setLayout(self.layout)
-
-#         self.button.clicked.connect(self.magic)
-
-
-#     def magic(self):
-#         #self.text.setText(random.choice(self.hello))
-#         fileName = QtWidgets.QFileDialog.getOpenFileName()
-#         print(fileName[0])
-#         pixmap = QtGui.QPixmap(str(fileName[0]))
-#         self.text.setPixmap(pixmap)
-#         self.text.show()
-#         self.update()
-        
-
-
-# In[ ]:
-
-
-#print(length)
-
-
-# In[14]:
-
-
-# app = QtWidgets.QApplication([])
-
-# widget = MyWidget()
-# widget.resize(800, 600)
-# widget.show()
-
-# sys.exit(app.exec_())
-
-
-# In[15]:
-
-
-dimension
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
