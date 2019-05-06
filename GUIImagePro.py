@@ -225,7 +225,7 @@ def detect_lines(gray):
     #print('edges before houghlines')
     #plt.imshow(edges, cmap='gray')
     #plt.show()
-    lines = cv2.HoughLinesP(edges, 1, np.pi/180, 85, minLineLength=0, maxLineGap=0)       # Detect lines
+    lines = cv2.HoughLinesP(edges, 1, np.pi/180, 85, minLineLength=15, maxLineGap=0)       # Detect lines
 
 
     ####################################################################################################################
