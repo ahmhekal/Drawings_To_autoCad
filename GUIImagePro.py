@@ -1,7 +1,8 @@
+print("please wait a minute :D ")
+
 import matplotlib
 #get_ipython().run_line_magic('matplotlib', 'inline')
 import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
 from PIL import Image
 import numpy as np
 import cv2
@@ -10,8 +11,15 @@ from operator import itemgetter
 from dxfwrite import DXFEngine as dxf
 from dxfwrite.dimlines import dimstyles, LinearDimension ,RadialDimension
 
+import sys
+import PySide2
+from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2.QtWidgets import QApplication, QPushButton, QWidget, QHBoxLayout, QVBoxLayout, QFileDialog, QLineEdit
+from PySide2.QtGui import QWindow, QPalette
+import random
+import os
 
-print("please wait a minute :D ")
+
 # Number of colors #
 Red=1
 Yellow=2
@@ -1100,14 +1108,6 @@ def main_prog():
 
 
 # In[ ]:
-import sys
-import PySide2
-from PySide2 import QtCore, QtGui, QtWidgets
-from PySide2.QtWidgets import QApplication, QPushButton, QWidget, QHBoxLayout, QVBoxLayout, QFileDialog, QLineEdit
-from PySide2.QtGui import QWindow, QPalette
-import random
-import math
-import os
 
 points_list = []
 dimension = 0
@@ -1129,6 +1129,7 @@ def reset():
     list_circles = []
     distancelist = []
     points_list = []
+
 
 
 def Import_pic():
@@ -1200,10 +1201,10 @@ def getPos(event):
     x = event.pos().x()
     y = event.pos().y()
     points_list.append((x, y))
-    if (clicklabel.text() == "First point selected"):
-        clicklabel.setText("Second point selected ")
+    if (clicklabel.text() == "First point selected\nclick on Second point"):
+        clicklabel.setText("Second point selected\n Enter dimension ")
     else:
-        clicklabel.setText("First point selected")
+        clicklabel.setText("First point selected\nclick on Second point")
     filelabel.hide()
     clicklabel.show()
 
