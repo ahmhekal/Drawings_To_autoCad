@@ -38,11 +38,8 @@ horizontal=[]
 vertical=[]
 general_line=[]
 
-#image name
-
 
 list_circles=[]
-
 
 
 minx=0
@@ -56,15 +53,14 @@ maxy=0
 r=15 #how much do we want to approximate near points to be the same
 
 
-
-def same(arr1,arr2):
+def same(arr1,arr2): #if two arrays are similar to each other
     r=18
     if abs(arr1[0]-arr2[0])<r and abs(arr1[1]-arr2[1])<r and abs(arr1[2]-arr2[2])<r and abs(arr1[3]-arr2[3])<r:
         return True
     else :
         return False
 
-def samep(n1,n2):
+def samep(n1,n2):  #if two points are similar to each other
     r=15
     if abs(n1-n2)<r:
         return True
@@ -72,7 +68,7 @@ def samep(n1,n2):
         return False
 
 
-def im_in(n, array):
+def im_in(n, array): #if a point is similar to any point in an array
     r=15
     for i in array:
         if abs(n-i)<r:
@@ -955,10 +951,6 @@ def draw():
 
 
 
-
-
-
-
 # In[3]:
 
 
@@ -1057,8 +1049,6 @@ def main_prog():
         s.line_with_NO_dims(i[0]/factor, i[1]/factor, i[2]/factor, i[3]/factor,Green)
     for i in horizontal:
         s.line_with_NO_dims(i[0]/factor, i[1]/factor, i[2]/factor, i[3]/factor,Green)
-
-
 
 
     #print(vertical)
@@ -1338,8 +1328,6 @@ dimension
 
 
 # In[11]:
-
-
 
 img = cv2.imread('./image11.png', cv2.IMREAD_UNCHANGED)
 dim = [1280, 850]
