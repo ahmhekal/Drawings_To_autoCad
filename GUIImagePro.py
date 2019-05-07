@@ -398,14 +398,14 @@ def det_circles(img,deep=0):
     img = cv2.medianBlur(img,5)
 
     circles=[]
-    if deep==0:
+    if deep==0: #search for circles with high parameters
         try:
             circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,
                     1,60,param1=50, param2=30, minRadius=0,maxRadius=0)
             circles = np.uint16(np.around(circles))
         except:
             pass
-    else:
+    else: #search for circles with lower parameters
         try:
             circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,
                     1,60,param1=30, param2=15, minRadius=0,maxRadius=0)
@@ -644,7 +644,6 @@ def draw():
 
     test = cv2.imread(name)     # Reading the original image
 
-
     gray = cv2.cvtColor(test, cv2.COLOR_BGR2GRAY)                # convert fron BGR to Gray
 
 
@@ -712,7 +711,7 @@ def draw():
 
     output = cv2.dilate(output,cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(7,7)),iterations = 1)
 
-    output=cv2.bitwise_not(output)
+    output=cv2.bitwise_not(output) #image with circles only
 
     # print('output circles only to be detected')
     # plt.imshow(output)
@@ -732,7 +731,7 @@ def draw():
 
 
     only_circles = output
-    deep=0 #the last iteration try to find circles more deeply
+    deep=0 #in the last iteration we try to find circles more deeply
 
     while(1):
 
