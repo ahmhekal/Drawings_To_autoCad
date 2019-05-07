@@ -19,7 +19,6 @@ from PySide2.QtGui import QWindow, QPalette
 import random
 import os
 
-
 # Number of colors #
 Red=1
 Yellow=2
@@ -38,20 +37,15 @@ horizontal=[]
 vertical=[]
 general_line=[]
 
-
 list_circles=[]
-
 
 minx=0
 maxy=0
 
 
-
-
 ######functions
 
 r=15 #how much do we want to approximate near points to be the same
-
 
 def same(arr1,arr2): #if two arrays are similar to each other
     r=18
@@ -67,17 +61,14 @@ def samep(n1,n2):  #if two points are similar to each other
     else:
         return False
 
-
 def im_in(n, array): #if a point is similar to any point in an array
     r=15
     for i in array:
         if abs(n-i)<r:
             return True
-
     return False
 
-
-def connect_vertical_lines(vertical_lines):
+def connect_vertical_lines(vertical_lines): #if a line is inside another line or extend to another line, make them a single line
     maxy=0
     #print('e3rd', vertical_lines)
     ShouldRemove = []
@@ -95,24 +86,19 @@ def connect_vertical_lines(vertical_lines):
             if vertical_lines[i][0] == vertical_lines[j][0]:  # They have the same x #
 
                 if vertical_lines[i][1] <= vertical_lines[j][1] and vertical_lines[i][3] >= vertical_lines[j][3]:  # i involve j #
-                    #print(str(vertical_lines[i]) + " involve " + str(vertical_lines[j]),i)
                     ShouldRemove.append(vertical_lines[j])     # we should delete j
 
                 elif vertical_lines[i][1] >= vertical_lines[j][1] and vertical_lines[i][3] <= vertical_lines[j][3]:  # j involve i #4
-                    #print(str(vertical_lines[j]) + " involve " + str(vertical_lines[i]),i)
                     ShouldRemove.append(vertical_lines[i])    # we should delete i
 
                 elif vertical_lines[i][1] <= vertical_lines[j][1] and vertical_lines[i][3] >= vertical_lines[j][1]:
                     extention_flag=1
-                    #print('case',vertical_lines[i],vertical_lines[j])
                     ShouldRemove.append(vertical_lines[j])
                     if vertical_lines[j][3]>=maxy:
                         maxy=vertical_lines[j][3]
 
-
         if extention_flag==1:
             vertical_end.append((vertical_lines[i],maxy))
-            #print('appedned',vertical_lines[i],maxy)
 
     output=[]
     for i in range(len(vertical_lines)):
@@ -124,18 +110,15 @@ def connect_vertical_lines(vertical_lines):
                 break
 
         if(flag==0):
-            #print('3mlna append',len(vertical_end))
+
             for k in range(len(vertical_end)):
-                #print('elmafrood',vertical_lines[i],vertical_end[k][0])
                 if(vertical_lines[i][0]==vertical_end[k][0][0] and vertical_lines[i][1]==vertical_end[k][0][1] and
                   vertical_lines[i][2]==vertical_end[k][0][2] and vertical_lines[i][3]==vertical_end[k][0][3]):
                     vertical_lines[i][3]=vertical_end[k][1]
-                    #print('fe3ly',i,vertical_end[k][1])
             output.append(vertical_lines[i])
-
     return output
 
-def connect_horizontal_lines(horizontal_lines):
+def connect_horizontal_lines(horizontal_lines):  #if a line is inside another line or extend to another line, make them a single line
     maxx=0
     ShouldRemove = []
     horizontal_end=[]
@@ -166,7 +149,7 @@ def connect_horizontal_lines(horizontal_lines):
 
         if extention_flag==1:
             horizontal_end.append((horizontal_lines[i],maxx))
-            #print('appedned',horizontal_lines[i],maxx)
+
 
     output=[]
     for i in range(len(horizontal_lines)):
@@ -179,7 +162,6 @@ def connect_horizontal_lines(horizontal_lines):
 
         if(flag==0):
             for k in range(len(horizontal_end)):
-                #print('elmafrood',horizontal_lines[i],horizontal_end[k][0])
                 if(horizontal_lines[i][0]==horizontal_end[k][0][0] and horizontal_lines[i][1]==horizontal_end[k][0][1] and
                   horizontal_lines[i][2]==horizontal_end[k][0][2] and horizontal_lines[i][3]==horizontal_end[k][0][3]):
                     horizontal_lines[i][2]=horizontal_end[k][1]
@@ -191,18 +173,18 @@ def connect_horizontal_lines(horizontal_lines):
 
 ############################################ FUNCTION DETECT LINES
 def detect_lines(gray):
-    global  horizontal
+
+    #make all lines lists global
+    global horizontal
     global vertical
     global general_line
     global minx
     global maxy
 
-    #creating a corresponding white image
-
+    #creating a corresponding white image (To draw lines on it)
     white = np.zeros_like(gray)
     white.fill(255)
-    pure_lines = white
-
+    pure_lines = white #image will contain lines only
 
     #detect edge
     #di = cv2.dilate(gray,cv2.getStructuringElement(cv2.MORPH_RECT,(7,7)),iterations = 1)
@@ -212,8 +194,7 @@ def detect_lines(gray):
     #convert to binary image
     ret,edges = cv2.threshold(edges,40,255,cv2.THRESH_BINARY)
 
-
-
+    #Closing
     kernel=cv2.getStructuringElement(cv2.MORPH_RECT,(7,7))
     edges = cv2.morphologyEx(edges,cv2.MORPH_CLOSE,kernel)
 
@@ -221,18 +202,20 @@ def detect_lines(gray):
     #print('edges before houghlines')
     #plt.imshow(edges, cmap='gray')
     #plt.show()
+
     lines = cv2.HoughLinesP(edges, 1, np.pi/180, 85, minLineLength=15, maxLineGap=0)       # Detect lines
 
 
     ####################################################################################################################
 
-    new_lines=[]
-    try:
+    new_lines=[] #new list for lines with redundant lines dicarded
+
+    try: #preventing errors if the image is without lines
         for i in range(len(lines)):
             flag=0
             if (i!=0):
                 for j in range(i):
-                        if same(lines[i][0],lines[j][0]):
+                        if same(lines[i][0],lines[j][0]): #if the line is already in lines list don't append it to new_line
                             flag=1
                             continue
             if(flag==0):
@@ -244,12 +227,13 @@ def detect_lines(gray):
                 new_lines.append(line)
 
     except:
-        #print('no lines found')
+        print('no lines found')
         return pure_lines
 
-    xs=[]
-    ys=[]
+    xs=[] #all x xoordinates of all points
+    ys=[] #all y coordinates of all points
 
+    #each element in lines list : x1,y1,x2,y2
     for i in new_lines:
         xs.append(i[0])
         xs.append(i[2])
@@ -260,24 +244,22 @@ def detect_lines(gray):
     sorted_x=sorted(xs)
     sorted_y=sorted(ys)
 
-
-    special_x=[]
-    special_y=[]
-
+    special_x=[] #list of special x coordinates
+    special_y=[] #list of special y coordinates
 
     for i in sorted_x:
-        if not(im_in(i, special_x)):
+        if not(im_in(i, special_x)): #if the x coordinates doesn't exist in the list yet, append it
             special_x.append(i)
 
     for i in sorted_y:
-        if not(im_in(i, special_y)):
+        if not(im_in(i, special_y)): #if the y coordinates doesn't exist in the list yet, append it
             special_y.append(i)
 
     #print(special_x,'yes')
 
-
     ######################################################################################################################
 
+    #modifying new_lines list with the new values of the closest special x and special y values
     for i in range(len(new_lines)):
         for j in range(len(special_x)):
             if(abs(new_lines[i][0]-special_x[j])<r):
@@ -298,7 +280,7 @@ def detect_lines(gray):
                 new_lines[i][3]=special_y[j]
                 break
 
-
+    #draw the lines on the white image
     for i in range(len(new_lines)):
         x1, y1, x2, y2 = new_lines[i]
         cv2.line(white, (x1, y1), (x2, y2), (0, 0, 0), 3)
@@ -311,8 +293,7 @@ def detect_lines(gray):
     #plt.imshow(white)
     #plt.show()
 
-    pure_lines = white
-
+    pure_lines = white #image contains lines only drawin on a wgite image
 
     #FOR FARAG's HAPPINESS  ( Thank You ^^ )
     # Getting the start point #
@@ -321,11 +302,8 @@ def detect_lines(gray):
 
     #print(new_lines, 'all lines')
 
-
-
+    #make the origin of the image the bottom left point
     for i in range(len(new_lines)):
-
-
         new_lines[i][0]-=minx
         new_lines[i][2]-=minx
 
@@ -334,6 +312,7 @@ def detect_lines(gray):
 
 
 
+    #lists of lines
     vertical=[]
     horizontal=[]
     general_line=[]
@@ -363,7 +342,6 @@ def detect_lines(gray):
     for i in horizontal_1:
         horizontal.append(i)
 
-
     for i in general_line_1:
         general_line.append(i)
 
@@ -379,20 +357,10 @@ def detect_lines(gray):
 
 
 
-
-
-
-
-
-
-
-
 print('################### Stating The Program ... ################### \n')
 def det_circles(img,deep=0):
 
-
     img = cv2.medianBlur(img,5)
-
     circles=[]
     if deep==0: #search for circles with high parameters
         try:
@@ -401,7 +369,7 @@ def det_circles(img,deep=0):
             circles = np.uint16(np.around(circles))
         except:
             pass
-    else: #search for circles with lower parameters
+    else: #search for circles with lower parameters (deeply).. this happens in the last iteration only
         try:
             circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,
                     1,60,param1=30, param2=15, minRadius=0,maxRadius=0)
@@ -412,8 +380,7 @@ def det_circles(img,deep=0):
 
 
 
-
-
+###################### AUTOCAD PART
 class shapes:
 
     global factor
@@ -421,8 +388,6 @@ class shapes:
 
     def __init__(self,fileName):
         self.drawing = dxf.drawing(fileName + '.dxf')
-
-
 
     def text(self,text,x,y,color = Foshia):
         text = dxf.text(text, (x, y), height=2, rotation=0)
@@ -452,7 +417,6 @@ class shapes:
 
         dimstyles.new("arrow", tick="DIMTICK_ARROW",scale=1,height = hh+0.2, tick2x=True, dimlineext=0.,tickfactor=length/5)
         #dimlineex: incraese the length of line
-
 
 
         # The angle control the slope of line
@@ -523,7 +487,6 @@ class shapes:
 
         dimstyles.new("arrow",tick="DIMTICK_ARROW",scale=1,height = hh+0.2 , tick2x=True, dimlineext=0.
                       ,tickfactor=length/5)
-
 
         self.drawing.add(
             LinearDimension((x1 + (length/10) , 7), points, dimstyle='arrow', angle=90))  # mn hna bt7dd x bta3 al point
@@ -632,40 +595,22 @@ class shapes:
                            vertical[index][2]/factor, vertical[index][3]/factor,vertical[index][4]/factor,Green)
 
 
-# In[2]:
-
 
 def draw():
-
-
     test = cv2.imread(name)     # Reading the original image
 
     gray = cv2.cvtColor(test, cv2.COLOR_BGR2GRAY)                # convert fron BGR to Gray
-
 
     global horizontal
     global vertical
     global general_line
 
-    pure_lines = detect_lines(gray)
-
-    # #print('NOWWWWWW')
-    # plt.imshow(pure_lines)
-    # plt.show()
-
-    # vertical, horizontal ,general_line, pure_lines = detect_lines(pure_lines, white)
-
-    # print('NOWWWWWW')
-    # plt.imshow(pure_lines)
-    # plt.show()
-
+    pure_lines = detect_lines(gray) #detecting lines
 
 
     ##################################################################################################################
 
-    #print('######################################################2 \n')
     test = cv2.cvtColor(test, cv2.COLOR_BGR2GRAY)                # convert fron BGR to Gray
-
 
     test = cv2.Canny(test, 100, 150)                           # get the edges
 
@@ -677,9 +622,6 @@ def draw():
     #ret,test = cv2.threshold(test,70,255,cv2.THRESH_BINARY)
 
     test=cv2.bitwise_not(test)
-
-
-
 
 
     ret,pure_lines = cv2.threshold(pure_lines,40,255,cv2.THRESH_BINARY)
@@ -697,12 +639,10 @@ def draw():
 
     #white2 = cv2.erode(white2,cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(9,9)),iterations = 1)
 
-
     only_lines=cv2.bitwise_not(white2)
 
-
     test=cv2.bitwise_not(test)
-    output=cv2.subtract(test,white2)
+    output=cv2.subtract(test,white2) #subtract the lines from the original image to get the circles only
     test=cv2.bitwise_not(test)
 
     output = cv2.dilate(output,cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(7,7)),iterations = 1)
@@ -714,33 +654,27 @@ def draw():
     # plt.show()
 
 
-
-
     #print('######################################################4 \n')
 
     kernal=cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(9,9))
 
-
-
-
     #output=cv2.imread('circles1.png')
 
-
-    only_circles = output
+    only_circles = output #image contain circles to be detected only
     deep=0 #in the last iteration we try to find circles more deeply
 
+
+
+    #loop over all circle detection, detect then subtract and detect again, the last iteration detect deeply then out
+
     while(1):
-
         gray = output
-
         # print('a circle to be detected')
         # plt.imshow(gray,cmap='gray')
         # plt.show()
 
         circles=det_circles(gray,deep)
         #print(circles)
-
-        #deep=0 #deep = 0 again to check if it one a
 
         try:
             if(len(circles)==0  or circles[0][0][2]==0):
@@ -749,7 +683,6 @@ def draw():
         except:
             deep=1
             #print('except')
-
 
         if(deep==1): #try to deep search for circles
             circles=det_circles(gray,deep)
@@ -763,7 +696,6 @@ def draw():
                 deep=1
                 #print('except again')
                 break
-            #continue
 
         #print('circles after break', circles)
         for i in circles[0]:
@@ -776,7 +708,7 @@ def draw():
 
             list_circles.append(circle)
 
-        #creating a corresponding white image
+        #creating a corresponding white image to draw circles on
         white_new = np.zeros_like(test)
         white_new.fill(255)
 
@@ -790,7 +722,7 @@ def draw():
         test = cv2.erode(test,cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(5,5)),iterations = 1)
         white2 = cv2.dilate(white2,cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(19,19)),iterations = 1)
 
-        output = cv2.subtract(test , white2)
+        output = cv2.subtract(test , white2) #subtract the detected circle(s) from the original image to detect again the mect iteration
 
         # print('this')
         # plt.imshow(test)
@@ -806,7 +738,6 @@ def draw():
 
 
         output = cv2.dilate(output,cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(5,5)),iterations = 1)
-
         output=cv2.bitwise_not(output)
 
         #print('after removing the first circle')
@@ -824,12 +755,6 @@ def draw():
 
 
     #print('list', list_circles)
-
-
-
-
-
-
 
 
     #gray = cv2.imread(name,0)
@@ -854,27 +779,28 @@ def draw():
     #gray=cv2.subtract(only_lines, gray)
     #gray = cv2.dilate(gray,cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(21,21)),iterations = 1)
 
-    gray = only_circles                # convert fron BGR to Gray
+    gray = only_circles
     gray = cv2.erode(gray,cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(17,17)),iterations = 1)
 
     # print('gray without lines')
     # plt.imshow(gray,cmap='gray')
     # plt.show()
-    #gray=cv2.bitwise_not(gray)
 
+
+    #looping through all circles
+    #To determine wwather it is a full or a half circle ...
     for j in range(len(list_circles)):
-
         #print('circle number', j)
         Find_Right_point = 0
         Find_Left_point = 0
         Find_Up_point = 0
         Find_Down_point = 0
 
-        x = list_circles[j][0]
-        y = list_circles[j][1]
-        r = list_circles[j][2]
+        x = list_circles[j][0] #x coordinates
+        y = list_circles[j][1] #y coordinates
+        r = list_circles[j][2] #radius
 
-        black = 200 #if the pixel value is less than this,, consider it black
+        black = 200 #if the pixel value is less than this,, consider it black (we may need to make this value smaller)
 
         for i in range (0,12):
             for k in range(25):
@@ -941,7 +867,7 @@ def draw():
         #print (j[2], 'list of circles')
 
 
-
+    #transform wrt the new origin
     for j in range(len(list_circles)):
         list_circles[j][0] -= minx
         list_circles[j][1]  = maxy-list_circles[j][1]
@@ -949,10 +875,7 @@ def draw():
 
         #plt.imshow(white,cmap='gray')
 
-
-
 # In[3]:
-
 
 # This main is only for Testing #
 def main_prog():
@@ -960,8 +883,6 @@ def main_prog():
     global horizontal
     global vertical
     global general_line
-
-
 
     s = shapes(name)
     #s.circle_with_dims(2,3,5,Blue)
@@ -978,9 +899,6 @@ def main_prog():
     # s.circle_with_dims(2,17,2)
     # s.arc(1.2,5.6,2.4,30.5,90.9)
 
-
-
-
      #EX2: trying to draw the proposal shape #
 
     global factor
@@ -990,7 +908,6 @@ def main_prog():
     #[[57, 58, 318, 58, 261.0], [57, 145, 318, 145, 261.0], [0, 0, 385, 0, 385.0]]
     horizontal=sorted(horizontal, key = itemgetter(4))    # sortred by length
  #  HORIZONTAL=sorted(HORIZONTAL, key = itemgetter(1))    # sorted by ( y )
-
 
     if(len(horizontal)==1):
         # print("ok1")
@@ -1018,8 +935,6 @@ def main_prog():
         elif(horizontal[i][4]!=horizontal[i-1][4] and horizontal[i][4]!=horizontal[i+1][4]):
             # print("ok6")
             s.Determine_UpperOrUnder(horizontal[i][1],i,factor)
-
-
 
     vertical=sorted(vertical, key = itemgetter(4))
 
@@ -1049,7 +964,6 @@ def main_prog():
         s.line_with_NO_dims(i[0]/factor, i[1]/factor, i[2]/factor, i[3]/factor,Green)
     for i in horizontal:
         s.line_with_NO_dims(i[0]/factor, i[1]/factor, i[2]/factor, i[3]/factor,Green)
-
 
     #print(vertical)
 
@@ -1098,6 +1012,9 @@ def main_prog():
 
 # In[ ]:
 
+
+##################### GUI PART ####################################
+
 points_list = []
 dimension = 0
 distancelist = []
@@ -1121,7 +1038,7 @@ def reset():
 
 
 
-def Import_pic():
+def Import_pic(): #import button
     reset()
     fileName = QtWidgets.QFileDialog.getOpenFileName()
     pixmap = QtGui.QPixmap(str(fileName[0]))
@@ -1324,9 +1241,6 @@ app.exec_()
 
 
 
-dimension
-
-
 # In[11]:
 
 img = cv2.imread('./image11.png', cv2.IMREAD_UNCHANGED)
@@ -1334,6 +1248,5 @@ dim = [1280, 850]
 
 resized = cv2.resize(img, (1920, 1000))
 cv2.imwrite('image12.png', resized)
-
 
 temp=name.split('.')[0]
