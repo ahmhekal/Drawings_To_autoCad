@@ -2,7 +2,7 @@
 A program that converts engineering drawings to autocad projects
 
 Names :
-Ahmed Mohamed Ahmed Hekal
-Omar Ashraf Sobhy
-Mohamed Mahmoud Farag
-Doaa Kamel Abdelmoneim Ali 
+-Ahmed Mohamed Ahmed Hekal
+-Omar Ashraf Sobhy
+-Mohamed Mahmoud Farag
+-Doaa Kamel Abdelmoneim Ali 
